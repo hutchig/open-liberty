@@ -13,37 +13,47 @@ package com.ibm.ws.microprofile.config_fat_tck;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.RunnerBuilder;
 
-@RunWith(TckSuiteRunner.class)
+import com.ibm.ws.microprofile.config_fat_tck.TckSuiteRunner.TckMvn;
+
+//@RunWith(TckSuiteRunner.class)
+
+@TckMvn( pom="pom.xml", goals="test", profile="liberty-nix", tckSuiteXml="tck-suite.xml"  )
+@RunWith(Suite.class)
 @SuiteClasses({
-  SimpleTest.class,
+                //SimpleTest.class,
+	TCKClient.class,
 })
 public class FATSuite {
+
 }
 
-/*
- * The parent of the @RunWith(TckSuiteRunner) class
- * above looks for
- * the value (annotation default parameter name) of SuiteClasses
- * in the getAnnotatedClasses method of the junit Suite class. 
- */
-//@SuiteClasses({
-//                SimpleTest.class,
-//})
+
+
+//@SuiteClasses({ SimpleTest.class, })
+
+
 
 /*
- * We replace the implementation of   private static Class<?>[] getAnnotatedClasses(Class<?> klass) throws InitializationError {
- * in TckSuiteRunner with something that returns a Class<?>[] array of wrapper classes.
+ * The parent of the @RunWith(TckSuiteRunner) class above looks for the value
+ * (annotation default parameter name) of SuiteClasses in the
+ * getAnnotatedClasses method of the junit Suite class.
+ */
+// @SuiteClasses({
+// SimpleTest.class,
+// })
+
+/*
+ * We replace the implementation of private static Class<?>[]
+ * getAnnotatedClasses(Class<?> klass) throws InitializationError { in
+ * TckSuiteRunner with something that returns a Class<?>[] array of wrapper
+ * classes.
  * 
  * As it is called statically from
  * 
- *     public Suite(Class<?> klass, RunnerBuilder builder) throws InitializationError {
- *      this(builder, klass, getAnnotatedClasses(klass));
- *     }
+ * public Suite(Class<?> klass, RunnerBuilder builder) throws
+ * InitializationError { this(builder, klass, getAnnotatedClasses(klass)); }
  *
  * We have to replace the use of that contructor
  * 
  */
-
