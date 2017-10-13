@@ -11,22 +11,11 @@
  *******************************************************************************/
 package com.ibm.ws.microprofile.config_fat_tck;
 
-import java.io.File;
-
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.apache.maven.cli.MavenCli;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import com.ibm.websphere.simplicity.ShrinkHelper;
-
-import app1.web.TestServletA;
-import componenttest.annotation.Server;
-import componenttest.annotation.TestServlet;
-import componenttest.custom.junit.runner.FATRunner;
-import componenttest.topology.impl.LibertyServer;
 import componenttest.topology.utils.FATServletClient;
 
 /**
@@ -44,14 +33,14 @@ import componenttest.topology.utils.FATServletClient;
  * defined on the test servlet referenced by the annotation, and will be run
  * whenever this test class runs.
  */
-@RunWith(FATRunner.class)
+// @RunWith(FATRunner.class)
 public class TCKClient extends FATServletClient {
 
-	public static final String APP_NAME = "app1";
+	// public static final String APP_NAME = "app1";
 
-	@Server("FATServer")
-	@TestServlet(servlet = TestServletA.class, path = APP_NAME + "/TestServletA")
-	public static LibertyServer server1;
+	// @Server("FATServer")
+	// @TestServlet(servlet = TestServletA.class, path = APP_NAME + "/TestServletA")
+	// public static LibertyServer server1;
 
 	@BeforeClass
 	public static void setUp() throws Exception {
@@ -59,24 +48,80 @@ public class TCKClient extends FATServletClient {
 		// to a file
 		// Include the 'app1.web' package and all of it's java classes and sub-packages
 		// Include a simple index.jsp static file in the root of the WebArchive
-		WebArchive app1 = ShrinkWrap.create(WebArchive.class, APP_NAME + ".war").addPackages(true, "app1.web")
-				.addAsWebInfResource(new File("test-applications/" + APP_NAME + "/resources/index.jsp"));
+		// WebArchive app1 = ShrinkWrap.create(WebArchive.class, APP_NAME +
+		// ".war").addPackages(true, "app1.web")
+		// .addAsWebInfResource(new File("test-applications/" + APP_NAME +
+		// "/resources/index.jsp"));
 		// Write the WebArchive to 'publish/servers/FATServer/apps/app1.war' and print
 		// the contents
-		ShrinkHelper.exportAppToServer(server1, app1);
+		// ShrinkHelper.exportAppToServer(server1, app1);
 
-		server1.startServer();
+		// server1.startServer();
+		System.out.println("\nTCK1");
+
 	}
 
 	@AfterClass
 	public static void tearDown() throws Exception {
-		server1.stopServer();
+		// server1.stopServer();
+		System.out.println("\nTCK3");
 	}
 
 	@Test
 	public void test1() throws Exception {
-		System.out.println("TCK");
+	   
+		// System.out.println("\nTCK2");
+		// InvocationRequest request = new DefaultInvocationRequest();
+		// request.setPomFile( new File( "/path/to/pom.xml" ) );
+		// request.setGoals( Arrays.asList( "clean", "install" ) );
+		//
+		// Invoker invoker = new DefaultInvoker();
+		// invoker.execute( request );
+		// MavenCli maven = new MavenCli();
+		// maven.doMain(new String[]{"install"}, "path/to/project/root", System.out,
+		// System.out);
+
+		MvnCmd mvnCmd;
+
+		System.out.println(" in main ");
+		mvnCmd = new MvnCmd("/Users/hutchig/git/mpConfigTckRunner/tck");
+		mvnCmd.run();
+
+		// MavenCli cli = new MavenCli();
+		// cli.doMain(
+		// new String[] { "-P liberty-nix", "-DsuiteXmlFile=tck-suite.xml", "clean",
+		// "install" }, "/Users/hutchig/git/mpConfigTckRunner/tck", System.out,
+		// System.out
+		// );
+		System.out.println("After calling embedded maven");
 	}
+
+	class MvnCmd {
+		private static final int REQUIRED_PARMS = 2;
+
+		public MvnCmd(String project) {
+			this.project = project;
+		}
+
+		String project;
+		String profile = "liberty-nix";
+		String suite = "tck-suite.xml";
+		String[] goals = new String[] { "clean", "install" };
+
+		public void run() {
+			MavenCli cli = new MavenCli();
+			cli.doMain(this.toRunnableStringArray(), project, System.out, System.out);
+		}
+
+		String[] toRunnableStringArray() {
+			String[] cmd = new String[2 + goals.length];
+			cmd[0] = "-P" + profile;
+			cmd[1] = "-DsuiteXmlFile=" + suite;
+			System.arraycopy(goals, 0, cmd, REQUIRED_PARMS, goals.length);
+			return cmd;
+		}
+	}
+
 }
 
 // package com.ibm.ws.microprofile.config_fat_tck;

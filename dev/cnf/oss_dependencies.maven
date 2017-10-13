@@ -194,7 +194,10 @@ cglib:cglib-nodep:2.1_3
 io.opentracing:opentracing-api:0.30.0
 io.opentracing:opentracing-util:0.30.0
 io.opentracing:opentracing-mock:0.30.0
+# For Running a TCK as a FAT Test
 org.jboss.arquillian.core:arquillian-core-spi:1.1.13.Final
 org.jboss.arquillian.test:arquillian-test-spi:1.1.13.Final
 org.jboss.arquillian.container:arquillian-container-test-spi:1.1.13.Final
+org.apache.maven:maven-embedder:3.5.0
+org.apache.maven:maven-compat:3.5.0
 
