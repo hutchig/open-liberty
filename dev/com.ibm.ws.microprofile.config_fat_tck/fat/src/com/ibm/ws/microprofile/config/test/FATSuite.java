@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package com.ibm.ws.microprofile.config_fat_tck;
+package com.ibm.ws.microprofile.config.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

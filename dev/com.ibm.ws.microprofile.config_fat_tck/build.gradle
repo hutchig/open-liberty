@@ -31,7 +31,7 @@ addRequiredLibraries {
                'org.apache.maven:maven-model-builder:3.5.0',
                'org.apache.maven:maven-model:3.5.0',
                'org.apache.maven:maven-plugin-api:3.5.0',
-               'org.apache.maven:maven-builder-support;3.5.0',
+               'org.apache.maven:maven-builder-support:3.5.0',
                'org.apache.maven:maven-repository-metadata:3.5.0',
                'org.apache.maven:maven-settings-builder:3.5.0',
                'org.apache.maven:maven-settings:3.5.0',
@@ -41,6 +41,7 @@ addRequiredLibraries {
     arquillian 'org.jboss.arquillian.core:arquillian-core-spi:1.1.13.Final',
                'org.jboss.arquillian.test:arquillian-test-spi:1.1.13.Final',
                'org.jboss.arquillian.container:arquillian-container-test-spi:1.1.13.Final',
+               'org.jboss.arquillian.container:arquillian-container-spi:1.1.13.Final',
                'com.ibm.ws.org.jboss.arquillian.container:arquillian-wlp-managed-8.5:1.0.0',
                'aopalliance:aopalliance:1.0',
                'ch.qos.logback:logback-classic:1.1.2',
@@ -81,7 +82,13 @@ addRequiredLibraries {
                'org.sonatype.sisu:sisu-guava:0.9.9',
                'org.sonatype.sisu:sisu-guice:3.1.0',
                'org.sonatype.sisu:sisu-inject-bean:2.3.0',
-               'org.sonatype.sisu:sisu-inject-plexus:2.3.0'
+               'org.sonatype.sisu:sisu-inject-plexus:2.3.0',
+               'org.eclipse.aether:aether-spi:1.0.2.v20150114',
+               'org.eclipse.aether:aether-impl:1.0.2.v20150114',
+               'org.eclipse.aether:aether-api:1.0.2.v20150114',
+               'org.eclipse.aether:aether-util:1.0.2.v20150114',
+               'org.apache.maven:maven-resolver-provider:3.5.0'
+               
     }
     // Copy the dependencies wherever they may be needed
     copy {
