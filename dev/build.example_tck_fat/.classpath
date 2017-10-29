@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="fat/src"/>
+	<classpathentry kind="src" path="test-applications/app1/src"/>
+	<classpathentry kind="con" path="aQute.bnd.classpath.container"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="/Users/hutchig/.m2/repository/org/apache/maven/maven-embedder/3.5.0/maven-embedder-3.5.0.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="maven.groupId" value="org.apache.maven"/>
+			<attribute name="maven.artifactId" value="maven-embedder"/>
+			<attribute name="maven.version" value="3.5.0"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/hutchig/.m2/repository/org/eclipse/aether/aether-api/1.0.2.v20150114/aether-api-1.0.2.v20150114.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

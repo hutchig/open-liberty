@@ -8,6 +8,8 @@
 # Contributors:
 #     IBM Corporation - initial API and implementation
 #*******************************************************************************
+# 	org.codehaus.plexus:plexus-logging;vesion=1.0.4
+	
 -include= ~../cnf/resources/bnd/bundle.props
 bVersion=1.0
 
@@ -72,4 +74,12 @@ test.project: true
 	../build.sharedResources/lib/ws-junit/ws-junit.jar;version=file,\
 	com.ibm.websphere.javaee.jsonp.1.0;version=latest,\
 	com.ibm.websphere.javaee.servlet.3.0;version=latest,\
-	com.ibm.ws.common.encoder;version=latest
+	com.ibm.ws.common.encoder;version=latest,\
+		org.jboss.arquillian.core:arquillian-core-spi;version=1.1.13.Final,\
+		org.jboss.arquillian.test:arquillian-test-spi;version=1.1.13.Final,\
+		org.jboss.arquillian.container:arquillian-container-test-spi;version=1.1.13.Final,\
+		com.ibm.ws.org.jboss.arquillian.container:arquillian-wlp-managed-8.5;version=1.0.0,\
+		org.eclipse.aether:aether-spi;version=1.0.2.v20150114
+		org.eclipse.aether:aether-impl;version=1.0.2.v20150114
+		
+		

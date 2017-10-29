@@ -3,7 +3,7 @@
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
-# http:..www.eclipse.org.legal.epl-v10.html
+# http://www.eclipse.org/legal/epl-v10.html
 #
 # Contributors:
 #     IBM Corporation - initial API and implementation
@@ -12,8 +12,8 @@
 bVersion=1.0
 
 src: \
-	fat.src,\
-	test-applications.app1.src
+	fat/src,\
+	test-applications/app1/src
 
 test.project: true
 
@@ -29,13 +29,13 @@ runtime.minimum.java.level: 1.8
     javax.enterprise:cdi-api;version=1.0,\
     com.ibm.websphere.javaee.servlet.3.1;version=latest,\
     org.jboss.shrinkwrap:shrinkwrap-api;version=1.2.3,\
-    	com.ibm.websphere.wlp.maven.prereq;version=latest,\
     	org.apache.maven:maven-embedder;version=3.5.0,\
     	org.apache.maven:maven-compat;version=3.5.0,\
+    		org.apache.maven:maven-builder-support;version=3.5.0,\
     org.jboss.arquillian.core:arquillian-core-spi;version=1.1.13.Final,\
     org.jboss.arquillian.test:arquillian-test-spi;version=1.1.13.Final,\
     org.jboss.arquillian.container:arquillian-container-test-spi;version=1.1.13.Final,\
-    com.ibm.ws.org.jboss.arquillian.container:arquillian-wlp-managed-8.5;version=1.0.0,\    
+    com.ibm.ws.org.jboss.arquillian.container:arquillian-wlp-managed-8.5;version=1.0.0,\
     aopalliance:aopalliance;version=1.0,\
     ch.qos.logback:logback-classic;version=1.1.2,\
     ch.qos.logback:logback-core;version=1.1.2,\
@@ -43,10 +43,9 @@ runtime.minimum.java.level: 1.8
     commons-codec:commons-codec;version=1.4,\
     commons-io:commons-io;version=2.0.1,\
     commons-logging:commons-logging;version=1.1.1,\
-    javax.annotation.jsr:jsr250-ap;version=1.0,\
-    javax.inject.javax.inject:.javax.inject;version=1,\
-    org.apache.httpcomponents.httpclient;version=4.1.2,\
-    org.apache.httpcomponents.httpcore;version=4.1.2,\
+    javax.inject.javax.inject:javax.inject;version=1,\
+    org.apache.httpcomponents:httpclient;version=4.1.2,\
+    org.apache.httpcomponents:httpcore;version=4.1.2,\
     org.apache.maven:maven-aether-provider;version=3.0.5,\
     org.apache.maven:maven-artifact;version=3.5.0,\
     org.apache.maven:maven-compat;version=3.5.0,\

@@ -25,3 +25,4 @@ com.ibm.ws.internal.prereq.java:java.rt:1.8.0
 com.ibm.ws.internal.prereq.java:java.vm:1.8.0
 com.ibm.ws.internal.prereq.java:java.xml:1.8.0
 com.ibm.ws.internal.prereq.java:java.xmldsigfw:1.8.0
+com.ibm.ws.org.jboss.arquillian.container:arquillian-wlp-managed-8.5:1.0.0

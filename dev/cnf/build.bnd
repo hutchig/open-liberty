@@ -93,12 +93,38 @@ instrument.taskInjection: false
     ${workspace}/build.sharedResources/lib/junit/old/junit.jar\\;version=file,\
     ${workspace}/build.sharedResources/lib/ws-junit/ws-junit.jar\\;version=file}
     
-# If project contains '_fat' then add FAT infrastrucutre elements to buildpath    
+# If project contains '_fat' then add FAT infrastrucutre elements to buildpath
 -buildpath.fattestjars: ${if;${matches;${project};.*_fat.*};\
     org.jboss.shrinkwrap:shrinkwrap-api\\;version=1.2.3,\
     fattest.simplicity\\;version=latest,\
     com.ibm.ws.componenttest:public.api\\;version=1.0.0,\
     com.ibm.ws.componenttest\\;version=latest}
+
+# If project contains '_tck' then add TCK infrastructure elements 
+# (Embedded Maven, Surefire, Arquillian and their transitive dependencies)
+# to the buildpath
+-buildpath.tcktestjars: ${if;${matches;${project};.*_tck.*};\
+com.ibm.websphere.javaee.servlet.3.1\\;version=latest,\
+org.apache.derby:derbynet\\;version=10.11.1.1,\
+ch.qos.logback:logback-classic\\;version=1.2.1,\
+commons-cli:commons-cli\\;version=1.4,\
+org.apache.commons:commons-lang3\\;version=3.5,\
+org.apache.maven:maven-settings\\;version=3.5.0,\
+org.apache.maven:maven-core\\;version=3.5.0,\
+org.apache.maven:maven-plugin-api\\;version=3.5.0,\
+org.apache.maven:maven-model-builder\\;version=3.5.0,\
+org.apache.maven.resolver:maven-resolver-api\\;version=1.0.3,\
+org.apache.maven.resolver:maven-resolver-util\\;version=1.0.3,\
+org.apache.maven.shared:maven-shared-utils\\;version=3.1.0,\
+org.codehaus.plexus:plexus-utils\\;version=3.0.24,\
+org.codehaus.plexus:plexus-classworlds\\;version=2.5.2,\
+org.codehaus.plexus:plexus-component-annotations\\;version=1.7.1,\
+org.eclipse.sisu:org.eclipse.sisu.plexus\\;version=0.3.3,\
+org.slf4j:slf4j-api\\;version=1.7.22,\
+org.slf4j:slf4j-simple\\;version=1.7.22,\
+org.sonatype.plexus:plexus-sec-dispatcher\\;version=1.4,\
+org.sonatype.plexus:plexus-cipher\\;version=1.7,\
+org.apache.maven:maven-compat\\;version=3.5.0}
 
 javac.bootclasspath.1.4: ${defaultjdklib.bootclasspath}
 javac.bootclasspath.1.6: ${defaultjdklib.bootclasspath}

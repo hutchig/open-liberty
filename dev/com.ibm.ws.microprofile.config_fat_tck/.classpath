@@ -8,7 +8,6 @@
 	<classpathentry kind="lib" path="/Users/hutchig/.m2/repository/com/ibm/ws/componenttest/public.api/1.0.0/public.api-1.0.0.jar"/>
 	<classpathentry kind="src" path="/com.ibm.ws.componenttest"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/junit"/>
-	<classpathentry kind="src" path="/surefire-integration-tests"/>
 	<classpathentry kind="lib" path="/libertyGit/open-liberty/dev/build.image/wlp/dev/api/spec/com.ibm.websphere.javaee.servlet.3.1_1.0.18.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

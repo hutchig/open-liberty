@@ -1,0 +1,311 @@
+/*******************************************************************************
+ * Copyright (c) 2017 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+* 'org.sonatype.aether:aether-api:1.13.1',
+*               'org.sonatype.aether:aether-connector-wagon:1.13.1',
+*               'org.sonatype.aether:aether-impl:1.13.1',
+*               'org.sonatype.aether:aether-spi:1.13.1',
+*               'org.sonatype.aether:aether-util:1.13.1',
+*               'org.sonatype.plexus:plexus-cipher:1.7',
+*               'org.sonatype.plexus:plexus-sec-dispatcher:1.3',
+*               'org.sonatype.sisu.inject:guice-bean-binders:2.3.0',
+*               'org.sonatype.sisu.inject:guice-bean-containers:2.3.0',
+*               'org.sonatype.sisu.inject:guice-bean-converters:2.3.0',
+*               'org.sonatype.sisu.inject:guice-bean-inject:2.3.0',
+*               'org.sonatype.sisu.inject:guice-bean-locators:2.3.0',
+*               'org.sonatype.sisu.inject:guice-bean-reflect:2.3.0',
+*               'org.sonatype.sisu.inject:guice-bean-scanners:2.3.0',
+*               'org.sonatype.sisu.inject:guice-plexus-binders:2.3.0',
+*               'org.sonatype.sisu.inject:guice-plexus-converters:2.3.0',
+*               'org.sonatype.sisu.inject:guice-plexus-lifecycles:2.3.0',
+*               'org.sonatype.sisu.inject:guice-plexus-locators:2.3.0',
+*               'org.sonatype.sisu.inject:guice-plexus-metadata:2.3.0',
+*               'org.sonatype.sisu.inject:guice-plexus-scanners:2.3.0',
+*               'org.sonatype.sisu.inject:guice-plexus-shim:2.3.0',
+*               'org.sonatype.sisu:sisu-guava:0.9.9',
+*               'org.sonatype.sisu:sisu-guice:3.1.0',
+*               'org.sonatype.sisu:sisu-inject-bean:2.3.0',
+*               'org.sonatype.sisu:sisu-inject-plexus:2.3.0',
+*
+    maven      'org.apache.maven:maven-embedder:3.5.0',
+               'org.apache.maven:maven-compat:3.5.0',
+               'org.apache.maven:maven-aether-provider:3.0.5',
+               'org.apache.maven:maven-artifact:3.5.0',
+               'org.apache.maven:maven-compat:3.5.0',
+               'org.apache.maven:maven-core:3.5.0',
+               'org.apache.maven:maven-model-builder:3.5.0',
+               'org.apache.maven:maven-builder-support:3.5.0',
+               'org.apache.maven:maven-model:3.5.0',
+               'org.apache.maven:maven-repository-metadata:3.5.0',
+               'org.apache.maven:maven-settings-builder:3.5.0',
+               'org.apache.maven:maven-settings:3.5.0',
+               'org.apache.maven.wagon:wagon-http-shared4:2.1',
+               'org.apache.maven.wagon:wagon-http:2.1',
+               'org.apache.maven.wagon:wagon-provider-api:2.4',
+               'org.apache.commons:commons-lang3:3.5'
+               
+    arquillian 'org.jboss.arquillian.core:arquillian-core-spi:1.1.13.Final',
+               'org.jboss.arquillian.test:arquillian-test-spi:1.1.13.Final',
+               'org.jboss.arquillian.container:arquillian-container-test-spi:1.1.13.Final',
+               'org.jboss.arquillian.container:arquillian-container-spi:1.1.13.Final',
+               'com.ibm.ws.org.jboss.arquillian.container:arquillian-wlp-managed-8.5:1.0.0',
+               'aopalliance:aopalliance:1.0',
+               'ch.qos.logback:logback-classic:1.1.2',
+               'ch.qos.logback:logback-core:1.1.2',
+               'commons-cli:commons-cli:1.2',
+               'commons-codec:commons-codec:1.4',
+               'commons-io:commons-io:2.0.1',
+               'commons-logging:commons-logging:1.1.1',
+               'org.apache.httpcomponents:httpclient:4.1.2',
+               'org.apache.httpcomponents:httpcore:4.1.2',
+               'org.codehaus.plexus:plexus-classworlds:2.4',
+               'org.codehaus.plexus:plexus-component-annotations:1.5.5',
+               'org.codehaus.plexus:plexus-interpolation:1.14',
+               'org.codehaus.plexus:plexus-utils:2.0.6',
+               'org.jsoup:jsoup:1.6.1',
+               'org.slf4j:slf4j-api:1.7.6'
+    sonatype   'org.sonatype.aether:aether-api:1.13.1',
+               'org.sonatype.aether:aether-connector-wagon:1.13.1',
+               'org.sonatype.aether:aether-impl:1.13.1',
+               'org.sonatype.aether:aether-spi:1.13.1',
+               'org.sonatype.aether:aether-util:1.13.1',
+               'org.sonatype.plexus:plexus-cipher:1.7',
+               'org.sonatype.plexus:plexus-sec-dispatcher:1.3',
+               'org.sonatype.sisu.inject:guice-bean-binders:2.3.0',
+               'org.sonatype.sisu.inject:guice-bean-containers:2.3.0',
+               'org.sonatype.sisu.inject:guice-bean-converters:2.3.0',
+               'org.sonatype.sisu.inject:guice-bean-inject:2.3.0',
+               'org.sonatype.sisu.inject:guice-bean-locators:2.3.0',
+               'org.sonatype.sisu.inject:guice-bean-reflect:2.3.0',
+               'org.sonatype.sisu.inject:guice-bean-scanners:2.3.0',
+               'org.sonatype.sisu.inject:guice-plexus-binders:2.3.0',
+               'org.sonatype.sisu.inject:guice-plexus-converters:2.3.0',
+               'org.sonatype.sisu.inject:guice-plexus-lifecycles:2.3.0',
+               'org.sonatype.sisu.inject:guice-plexus-locators:2.3.0',
+               'org.sonatype.sisu.inject:guice-plexus-metadata:2.3.0',
+               'org.sonatype.sisu.inject:guice-plexus-scanners:2.3.0',
+               'org.sonatype.sisu.inject:guice-plexus-shim:2.3.0',
+               'org.sonatype.sisu:sisu-guava:0.9.9',
+               'org.sonatype.sisu:sisu-guice:3.1.0',
+               'org.sonatype.sisu:sisu-inject-bean:2.3.0',
+               'org.sonatype.sisu:sisu-inject-plexus:2.3.0',
+               'org.eclipse.aether:aether-spi:1.0.2.v20150114',
+               'org.eclipse.aether:aether-impl:1.0.2.v20150114',
+               'org.eclipse.aether:aether-api:1.0.2.v20150114',
+               'org.eclipse.aether:aether-util:1.0.2.v20150114',
+               'org.apache.maven:maven-resolver-provider:3.5.0'
+         copy {
+      // Adding jars to "autoFVT/lib/" will include them in a FAT bucket classpath at runtime
+      from configurations.maven
+      into "${buildDir}/autoFVT/lib/"
+    }
+    copy {
+      // Adding jars to "autoFVT/lib/" will include them in a FAT bucket classpath at runtime
+      from configurations.arquillian
+      into "${buildDir}/autoFVT/lib/"
+    }
+    copy {
+      // Adding jars to "autoFVT/lib/" will include them in a FAT bucket classpath at runtime
+      from configurations.sonatype
+      into "${buildDir}/autoFVT/lib/"
+    }          
+*  'org.codehaus.plexus:plexus-logging:1.0.4',
+OLD BELOW:
+                     'junit:junut:3.8.2'
+                     'org.apache.maven.wagon:wagon-provider-api:2.12',
+                     //'org.codehaus.plexus:plexus-interpolation:1.24',
+                     'org.slf4j:slf4j-api:1.7.22',
+                  'org.eclipse.sisu:org.eclipse.sisu.inject:0.3.3',
+                  'org.apache.maven:maven-aether-provider:3.0.5',
+                  'org.apache.maven:maven-compat:3.5.0',
+               'org.apache.maven.wagon:wagon-http-shared4:2.1',
+               'org.apache.maven.wagon:wagon-http:2.1',
+               'org.apache.commons:commons-lang3:3.5',
+               'org.codehaus.plexus:plexus-classworlds:2.5.2',
+               'javax.enterprise:cdi-api:1.0',
+               'org.codehaus.plexus:plexus-classworlds:2.5.2',
+               'org.codehaus.plexus:plexus-utils:3.0.17',
+               'org.eclipse.sisu:org.eclipse.sisu.inject:0.3.3',
+               'aopalliance:aopalliance:1.0',
+               'com.google.guava:guava:19.0',
+               'javax.inject:javax.inject:1',
+               'org.codehaus.plexus:plexus-component-annotations:1.7.1',
+               'org.codehaus.plexus:plexus-classworlds:2.5.2',
+               'org.codehaus.plexus:plexus-utils:3.0.17',
+               'org.eclipse.sisu:org.eclipse.sisu.inject:0.3.3',
+               'aopalliance:aopalliance:1.0',
+               'org.eclipse.aether:aether-spi:1.0.2.v20150114',
+               'org.eclipse.aether:aether-impl:1.0.2.v20150114',
+               'org.eclipse.aether:aether-api:1.0.2.v20150114',
+               'org.eclipse.aether:aether-util:1.0.2.v20150114',
+               'org.codehaus.plexus:plexus-component-annotations:1.7.1',
+               'org.codehaus.plexus:plexus-interpolation:1.24',
+               'org.codehaus.plexus:plexus-utils:3.0.24'
+
+ *******************************************************************************/
+apply from: '../cnf/gradle/scripts/fat.gradle'
+	
+// Example of pulling down binary dependencies from Artifactory
+addRequiredLibraries {
+  doLast {
+    configurations.testRuntime.each { println it }
+    // Define dependency groups
+    configurations {
+      derby
+      tck
+    }
+    // Define G:A:V coordinates of each dependency
+    dependencies {
+    derby      'org.apache.derby:derbynet:10.11.1.1'
+    tck        'org.apache.maven:maven-embedder:3.5.0',
+                  'ch.qos.logback:logback-classic:1.2.1',
+                     'ch.qos.logback:logback-core:1.2.1',
+                        //
+                     'org.slf4j:slf4j-api:1.7.22',
+                        // 
+                     'commons-cli:commons-cli:1.4',
+                        //
+                     'junit:junit:4.12',
+                        'org.hamcrest:hamcrest-core:1.3',
+                        //
+                  'org.apache.commons:commons-lang3:3.5',
+                     //
+                  'org.apache.maven:maven-settings:3.5.0',
+                     'org.codehaus.plexus:plexus-utils:3.0.24',
+                        //
+                  'org.apache.maven:maven-core:3.5.0',
+                     'com.google.inject:guice:4.0',
+                        'aopalliance:aopalliance:1.0',
+                        //
+                        'com.google.guava:guava:16.0.1',
+                           //
+                        'javax.inject:javax.inject:1',
+                           //
+                     //'org.apache.commons:commons-lang3:3.5',
+                     'org.apache.maven:maven-model:3.5.0',
+                        //
+                     //'org.apache.maven:maven-settings:3.5.0',
+                     'org.apache.maven:maven-settings-builder:3.5.0',
+                        //'org.apache.commons:commons-lang3:3.5',
+                     'org.apache.maven:maven-builder-support:3.5.0',
+                        //'org.apache.commons:commons-lang3:3.5',
+                        'org.codehaus.plexus:plexus-utils:3.0.24',
+                        //
+                     'org.apache.maven:maven-repository-metadata:3.5.0',
+                        //'org.codehaus.plexus:plexus-utils:3.0.24',
+                     'org.apache.maven:maven-artifact:3.5.0',
+                        //'org.apache.commons:commons-lang3:3.5',
+                        //'org.codehaus.plexus:plexus-utils:3.0.24',
+                     'org.apache.maven:maven-plugin-api:3.5.0',
+                        //'org.apache.maven:maven-model:3.5.0',
+                        //'org.apache.maven:maven-artifact:3.5.0',
+                     'org.apache.maven:maven-model-builder:3.5.0',
+                        'com.google.guava:guava:20.0',
+                        //'org.apache.commons:commons-lang3:3.5',
+                        //'org.apache.maven:maven-model:3.5.0',
+                        //maven-artifact
+                        //maven=builder-support
+                        //plexus-utils
+                        'org.codehaus.plexus:plexus-interpolation:1.24',
+                           //
+                        'org.codehaus.plexus:plexus-component-annotations:1.7.1',
+                           //
+                     'org.apache.maven:maven-resolver-provider:3.5.0',
+                        //guice 4.0
+                        //lang3
+                        //maven-model
+                        //maven-model-builder
+                        //'org.apache.maven:maven-repository-metadata:3.5.0',
+                        'org.apache.maven.resolver:maven-resolver-api:1.0.3',
+                           //
+                        'org.apache.maven.resolver:maven-resolver-spi:1.0.3',
+                           //
+                        'org.apache.maven.resolver:maven-resolver-util:1.0.3',
+                           //
+                        'org.apache.maven.resolver:maven-resolver-impl:1.0.3',
+                           //
+                        //'org.codehaus.plexus:plexus-component-annotations:1.7.1',
+                        //plexus-utils 3.0.24
+                     //'org.apache.maven.resolver:maven-resolver-api:1.0.3'
+                        'junit:junit:4.11', 
+                     //'org.apache.maven.resolver:maven-resolver-spi:1.0.3'
+                     //'org.apache.maven.resolver:maven-resolver-util:1.0.3'
+                     //'org.apache.maven.resolver:maven-resolver-impl:1.0.3'
+                     'org.apache.maven.shared:maven-shared-utils:3.1.0',
+                        'commons-io:commons-io:2.5',
+                           //
+                     //'org.codehaus.plexus:plexus-interpolation:1.24',
+                        //'org.codehaus.plexus:plexus-utils:3.0.24',
+                        //
+                     'org.codehaus.plexus:plexus-classworlds:2.5.2',
+                        //
+                     //'org.codehaus.plexus:plexus-component-annotations:1.7.1',
+                     //'org.eclipse.sisu:org.eclipse.sisu.plexus:0.3.3', // See below
+                     'org.sonatype.plexus:plexus-sec-dispatcher:1.4',
+                     //'org.codehaus.plexus:plexus-utils:1.5.5',// CLASH!! (Update 3.1.0)
+                  //'org.apache.maven:maven-plugin-api:3.5.0',
+                     //
+                  //'org.apache.maven:maven-model-builder:3.5.0',
+                  'org.apache.maven.resolver:maven-resolver-api:1.0.3',
+                     'junit:junit:4.11',
+                     'org.hamcrest:hamcrest-library:1.3',
+                  //'org.apache.maven.shared:maven-shared-utils:3.1.0',
+                  //'org.codehaus.plexus:plexus-utils:3.0.24',
+                  //'org.codehaus.plexus:plexus-classworlds:2.5.2',
+                  //'org.codehaus.plexus:plexus-component-annotations:1.7.1',
+                  'org.eclipse.sisu:org.eclipse.sisu.plexus:0.3.3',
+                     'javax.enterprise:cdi-api:1.0',
+                        'javax.annotation:jsr250-api:1.0',
+                          //
+                        //'javax.inject:javax.inject:1',
+                        'org.jboss.interceptor:jboss-interceptor-api:1.1',
+                        //
+                     'org.codehaus.plexus:plexus-component-annotations:1.5.5',
+                        //
+                    //'org.codehaus.plexus:plexus-classworlds:2.5.2',
+                        //
+                     'org.codehaus.plexus:plexus-utils:3.0.17',  // FIRST HARD CLASH!
+                        //
+                     'org.eclipse.sisu:org.eclipse.sisu.inject:0.3.3',
+                        'org.sonatype.sisu:sisu-guice:3.0', //CLASH! updates to 4.1.0? moved to eclipse
+                              //'aopalliance:aopalliance:1.0',
+                                 //
+                              //'javax.inject:javax.inject:1',
+                              'org.sonatype.sisu.inject:cglib:2.2.1', // Moved to eclipse
+                                 'asm:asm:3.1',
+                                    //
+                  //'org.slf4j:slf4j-api:1.7.22',
+                     //
+                  'org.slf4j:slf4j-simple:1.7.22',
+                     //'org.slf4j:slf4j-api:1.7.22',
+                  //'org.sonatype.plexus:plexus-sec-dispatcher:1.4',
+                     //'org.codehaus.plexus:plexus-utils:1.5.5',// CLASH!! (Update 3.1.0)
+                  'org.sonatype.plexus:plexus-cipher:1.7',
+                     'junit:junit:4.11', //CLASH!
+               'org.jboss.arquillian.core:arquillian-core-spi:1.1.13.Final',
+               'org.jboss.arquillian.test:arquillian-test-spi:1.1.13.Final',
+               'org.jboss.arquillian.container:arquillian-container-test-spi:1.1.13.Final',
+               'org.jboss.arquillian.container:arquillian-container-spi:1.1.13.Final',
+               'com.ibm.ws.org.jboss.arquillian.container:arquillian-wlp-managed-8.5:1.0.0'
+
+    }
+    // Copy the dependencies wherever they may be needed
+    copy {
+      // Adding jars to "autoFVT/lib/" will include them in a FAT bucket classpath at runtime
+      from configurations.tck
+      into "${buildDir}/autoFVT/lib/"
+    }
+    copy {
+      // Adding jars to "autoFVT/lib/" will include them in a FAT bucket classpath at runtime
+      from configurations.derby
+      into "${buildDir}/autoFVT/lib/"
+    }
+  }
+}
+	
