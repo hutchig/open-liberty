@@ -338,7 +338,10 @@ addRequiredLibraries {
                'org.eclipse.sisu:org.eclipse.sisu.plexus:0.3.3',
                'org.slf4j:slf4j-api:1.7.22',
                'org.sonatype.plexus:plexus-cipher:1.7',
-               'org.sonatype.plexus:plexus-sec-dispatcher:1.4'
+               'org.sonatype.plexus:plexus-sec-dispatcher:1.4',
+               'org.apache.maven:maven-plugin-api:2.0.6',
+               'org.codehaus.plexus:plexus-utils:3.0', 
+               'org.apache.maven.plugins:maven-clean-plugin:2.5'
 //               'org.apache.maven:maven-repository-metadata:2.0.6',
 //               'org.apache.maven:maven-settings:2.0.6',
 //               'org.apache.maven:maven-artifact:2.0.6',
@@ -346,7 +349,6 @@ addRequiredLibraries {
 //               'org.apache.maven:maven-error-diagnostics:2.0.6',
 //               'org.apache.maven:maven-model:2.0.6',
 //               'org.apache.maven:maven-monitor:2.0.6',
-//               'org.apache.maven:maven-plugin-api:2.0.6',
 //               'org.apache.maven:maven-plugin-descriptor:2.0.6',
 //               'org.apache.maven:maven-plugin-parameter-documenter:2.0.6',
 //               'org.apache.maven:maven-plugin-registry:2.0.6',

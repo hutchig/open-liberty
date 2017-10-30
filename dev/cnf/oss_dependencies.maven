@@ -259,3 +259,4 @@ org.apache.maven:maven-toolchain:1.0
 org.codehaus.mojo:exec-maven-plugin:1.1.1
 org.codehaus.plexus:plexus-container-default:1.0-alpha-9
 org.codehaus.plexus:plexus-interactivity-api:1.0-alpha-4
+org.apache.maven.plugins:maven-clean-plugin:2.5
