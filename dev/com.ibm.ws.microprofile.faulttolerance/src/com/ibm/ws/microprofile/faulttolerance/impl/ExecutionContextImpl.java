@@ -43,6 +43,7 @@ public class ExecutionContextImpl implements FTExecutionContext {
     private volatile long startTime;
     private volatile long attemptStartTime;
     private volatile long queueStartTime;
+    private volatile Throwable failure = null;
 
     private final String id;
 
@@ -76,6 +77,16 @@ public class ExecutionContextImpl implements FTExecutionContext {
     @Override
     public Object[] getParameters() {
         return params;
+    }
+
+    /**
+     * Returns the failure of the method execution
+     *
+     * @return the failure of the method execution
+     *         No @Override as not in 1.0
+     */
+    public Throwable getFailure() {
+        return failure;
     }
 
     /**
@@ -166,6 +177,8 @@ public class ExecutionContextImpl implements FTExecutionContext {
                 return;
             }
             mainExecutionComplete = true;
+
+            this.failure = t;
 
             onAttemptComplete(t);
 
