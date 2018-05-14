@@ -72,6 +72,11 @@ public class ExecutionContextImpl implements FTExecutionContext {
      * The time that the execution task was added to the bulkhead queue
      */
     private volatile long queueStartTime;
+    
+    /**
+     * A Throwable received from the target method, used in getFailure() impl
+     */    
+    private volatile Throwable failure = null;
 
     private final String id;
 
@@ -105,6 +110,16 @@ public class ExecutionContextImpl implements FTExecutionContext {
     @Override
     public Object[] getParameters() {
         return params;
+    }
+
+    /**
+     * Returns the failure of the method execution
+     *
+     * @return the failure of the method execution
+     *         No @Override as not in 1.0
+     */
+    public Throwable getFailure() {
+        return failure;
     }
 
     /**
@@ -200,6 +215,8 @@ public class ExecutionContextImpl implements FTExecutionContext {
                 return;
             }
             mainExecutionComplete = true;
+
+            this.failure = t;
 
             onAttemptComplete(t);
 
