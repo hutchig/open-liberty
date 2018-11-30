@@ -10,33 +10,27 @@
  *******************************************************************************/
 package com.ibm.ws.microprofile.reactive.streams.spi.impl;
 
-import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 
-import org.eclipse.microprofile.reactive.streams.CompletionSubscriber;
-import org.eclipse.microprofile.reactive.streams.spi.Graph;
 import org.eclipse.microprofile.reactive.streams.spi.ReactiveStreamsEngine;
-import org.eclipse.microprofile.reactive.streams.spi.UnsupportedStageException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
-import org.reactivestreams.Processor;
-import org.reactivestreams.Publisher;
 
 import com.ibm.websphere.ras.Tr;
 import com.ibm.websphere.ras.TraceComponent;
 import com.ibm.wsspi.kernel.service.utils.AtomicServiceReference;
-import com.lightbend.microprofile.reactive.streams.zerodep.BuiltGraph;
-import com.lightbend.microprofile.reactive.streams.zerodep.ReactiveStreamsEngineImpl;
+
+import io.smallrye.reactive.streams.Engine;
 
 @Component(name = "com.ibm.ws.microprofile.reactive.streams.spi.impl.WASReactiveStreamsEngineImpl", service = {
         ReactiveStreamsEngine.class }, property = {
                 "service.vendor=IBM" }, immediate = true, configurationPolicy = ConfigurationPolicy.IGNORE)
 
-public class WASReactiveStreamsEngineImpl extends ReactiveStreamsEngineImpl implements ReactiveStreamsEngine {
+public class WASReactiveStreamsEngineImpl extends Engine implements ReactiveStreamsEngine {
 
     private static final TraceComponent tc = Tr.register(WASReactiveStreamsEngineImpl.class);
 
@@ -62,30 +56,6 @@ public class WASReactiveStreamsEngineImpl extends ReactiveStreamsEngineImpl impl
 
     public WASReactiveStreamsEngineImpl() {
         super();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public <T> Publisher<T> buildPublisher(Graph graph) throws UnsupportedStageException {
-        return BuiltGraph.buildPublisher(getExecutor(), graph);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public <T, R> CompletionSubscriber<T, R> buildSubscriber(Graph graph) throws UnsupportedStageException {
-        return BuiltGraph.buildSubscriber(getExecutor(), graph);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public <T, R> Processor<T, R> buildProcessor(Graph graph) throws UnsupportedStageException {
-        return BuiltGraph.buildProcessor(getExecutor(), graph);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public <T> CompletionStage<T> buildCompletion(Graph graph) throws UnsupportedStageException {
-        return BuiltGraph.buildCompletion(getExecutor(), graph);
     }
 
     /**

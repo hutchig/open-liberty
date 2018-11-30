@@ -13,6 +13,7 @@ package com.ibm.ws.microprofile.reactive.streams.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 import java.util.function.Function;
@@ -20,7 +21,7 @@ import java.util.function.Function;
 import javax.inject.Inject;
 import javax.servlet.annotation.WebServlet;
 
-import org.eclipse.microprofile.reactive.streams.GraphAccessor;
+import org.eclipse.microprofile.reactive.streams.CompletionRunner;
 import org.eclipse.microprofile.reactive.streams.ProcessorBuilder;
 import org.eclipse.microprofile.reactive.streams.PublisherBuilder;
 import org.eclipse.microprofile.reactive.streams.ReactiveStreams;
@@ -28,6 +29,7 @@ import org.eclipse.microprofile.reactive.streams.SubscriberBuilder;
 import org.eclipse.microprofile.reactive.streams.spi.Graph;
 import org.eclipse.microprofile.reactive.streams.spi.ReactiveStreamsEngine;
 import org.eclipse.microprofile.reactive.streams.spi.Stage;
+import org.eclipse.microprofile.reactive.streams.spi.ToGraphable;
 import org.junit.Test;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -56,9 +58,9 @@ public class ReactiveStreamsTestServlet extends FATServlet {
         ProcessorBuilder<Integer, Integer> mapped = builder.map(Function.identity());
         ProcessorBuilder<Integer, Integer> distinct = builder.distinct();
         SubscriberBuilder<Integer, Void> cancelled = builder.cancel();
-        getAddedStage(Stage.Map.class, GraphAccessor.buildGraphFor(mapped));
-        getAddedStage(Stage.Distinct.class, GraphAccessor.buildGraphFor(distinct));
-        getAddedStage(Stage.Cancel.class, GraphAccessor.buildGraphFor(cancelled));
+        getAddedStage(Stage.Map.class, graphFor(mapped));
+        getAddedStage(Stage.Distinct.class, graphFor(distinct));
+        getAddedStage(Stage.Cancel.class, graphFor(cancelled));
     }
 
     /*
@@ -126,7 +128,6 @@ public class ReactiveStreamsTestServlet extends FATServlet {
     }
 
     private <S extends Stage> S getAddedStage(Class<S> clazz, Graph graph) {
-        assertTrue("Graph doesn't have inlet but should because it's meant to be a processor: " + graph, graph.hasInlet());
         assertEquals("Graph does not have two stages", graph.getStages().size(), 2);
         Iterator<Stage> stages = graph.getStages().iterator();
         Stage first = stages.next();
@@ -134,5 +135,30 @@ public class ReactiveStreamsTestServlet extends FATServlet {
         Stage second = stages.next();
         assertTrue("Second stage " + second + " is not a " + clazz, clazz.isInstance(second));
         return clazz.cast(second);
+    }
+
+    protected Graph graphFor(PublisherBuilder<?> pb) {
+        return objGraphFor(pb);
+    }
+
+    protected Graph graphFor(SubscriberBuilder<?, ?> sb) {
+        return objGraphFor(sb);
+    }
+
+    protected Graph graphFor(ProcessorBuilder<?, ?> pb) {
+        return objGraphFor(pb);
+    }
+
+    protected Graph graphFor(CompletionRunner<?> cr) {
+        return objGraphFor(cr);
+    }
+
+    private Graph objGraphFor(Object o) {
+        return ((ToGraphable) o).toGraph();
+    }
+
+    protected void assertEmptyStage(Stage stage) {
+        assertTrue(stage instanceof Stage.Of);
+        assertEquals(((Stage.Of) stage).getElements(), Collections.emptyList());
     }
 }
