@@ -20,10 +20,14 @@ Bundle-SymbolicName: com.ibm.websphere.io.reactivex.rxjava2.1.0; singleton:=true
 Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
 
 Import-Package: \
+  org.reactivestreams; version="[1.0,1.1)", \
   *
 
 Export-Package: \
-  io.reactivex; version=2.2.4
+  io.reactivex; version=2.2.4, \
+  io.reactivex.*; version=2.2.4, \
+  !io.reactivex.internal.*
+  
 
 Include-Resource: \
   @${repo;io.reactivex.rxjava2:rxjava;2.2.4;EXACT}

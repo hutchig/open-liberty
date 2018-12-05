@@ -23,7 +23,7 @@ Import-Package: \
   *
 
 Export-Package: \
-  io.smallrye.reactive.streams; version=0.2.2
+  io.smallrye.reactive.streams; version="0.2.2"
 
 Include-Resource: \
   @${repo;com.ibm.ws.io.smallrye.reactive:smallrye-reactive-streams-operators;0.2.2}

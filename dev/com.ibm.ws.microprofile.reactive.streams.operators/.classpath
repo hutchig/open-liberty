@@ -4,5 +4,6 @@
 	<classpathentry kind="src" output="bin_test" path="test/src"/>
 	<classpathentry exported="true" kind="con" path="aQute.bnd.classpath.container"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="/Users/hutchig/git/smallrye-reactive-streams-operators/implementation/target/smallrye-reactive-streams-operators-0.2.2-SNAPSHOT.jar" sourcepath="/Users/hutchig/git/smallrye-reactive-streams-operators/implementation/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
