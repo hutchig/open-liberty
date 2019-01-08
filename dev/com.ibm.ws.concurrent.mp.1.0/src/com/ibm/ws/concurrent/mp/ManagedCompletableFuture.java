@@ -22,7 +22,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -44,6 +43,7 @@ import com.ibm.websphere.ras.TraceComponent;
 import com.ibm.websphere.ras.annotation.Trivial;
 import com.ibm.ws.concurrent.WSManagedExecutorService;
 import com.ibm.ws.kernel.service.util.JavaInfo;
+import com.ibm.ws.threading.PolicyExecutor;
 import com.ibm.wsspi.threadcontext.ThreadContextDescriptor;
 import com.ibm.wsspi.threadcontext.WSContextService;
 
@@ -119,7 +119,7 @@ public class ManagedCompletableFuture<T> extends CompletableFuture<T> {
     /**
      * Stores a futureRef value to use during construction of a ManagedCompletableFuture.
      */
-    private static final ThreadLocal<AtomicReference<Future<?>>> futureRefLocal = new ThreadLocal<AtomicReference<Future<?>>>();
+    private static final ThreadLocal<FutureRefExecutor> futureRefLocal = new ThreadLocal<FutureRefExecutor>();
 
     /**
      * Redirects the CompletableFuture implementation to use ExecutorService.submit rather than Executor.execute,
@@ -128,8 +128,21 @@ public class ManagedCompletableFuture<T> extends CompletableFuture<T> {
      * Instances of this class are intended for one-time use, as each instance tracks a single Future.
      */
     @Trivial
-    private static class FutureRefExecutor extends AtomicReference<Future<?>> implements Executor {
+    static class FutureRefExecutor extends AtomicReference<Future<?>> implements Executor {
         private static final long serialVersionUID = 1L;
+
+        /**
+         * The reference back to the completable future allows the PolicyExecutor to complete
+         * the completable future upon cancel/abort of the PolicyTaskFuture.
+         * With the implementation for Java 8, this is a best-effort attempt because there is
+         * a timing window where the cancel/abort could happen before completableFutureRef is
+         * populated.
+         * However, with the implementation for Java 9+ the timing window is eliminated,
+         * such that completableFutureRef is always populated first (meaning direct reference
+         * could be used instead of AtomicReference). If Java 8 support is ever dropped, this
+         * can be updated.
+         */
+        private final AtomicReference<Future<?>> completableFutureRef = new AtomicReference<Future<?>>();
 
         private final ExecutorService executor;
 
@@ -143,7 +156,13 @@ public class ManagedCompletableFuture<T> extends CompletableFuture<T> {
 
         @Override
         public void execute(Runnable command) {
-            set(executor.submit(command));
+            Future<?> future;
+            if (executor instanceof PolicyExecutor)
+                future = ((PolicyExecutor) executor).submit(completableFutureRef, command);
+            else
+                future = executor.submit(command);
+
+            set(future);
         }
 
         @Override
@@ -162,7 +181,7 @@ public class ManagedCompletableFuture<T> extends CompletableFuture<T> {
      * @param managedExecutor managed executor service
      * @param futureRef reference to a policy executor Future that will be submitted if requested to run async. Otherwise null.
      */
-    ManagedCompletableFuture(CompletableFuture<T> completableFuture, Executor managedExecutor, AtomicReference<Future<?>> futureRef) {
+    ManagedCompletableFuture(CompletableFuture<T> completableFuture, Executor managedExecutor, FutureRefExecutor futureRef) {
         super();
 
         this.completableFuture = completableFuture;
@@ -178,6 +197,9 @@ public class ManagedCompletableFuture<T> extends CompletableFuture<T> {
             else
                 super.completeExceptionally(failure);
         });
+
+        if (futureRef != null)
+            futureRef.completableFutureRef.set(this);
     }
 
     /**
@@ -186,12 +208,15 @@ public class ManagedCompletableFuture<T> extends CompletableFuture<T> {
      * @param managedExecutor managed executor service
      * @param futureRef reference to a policy executor Future that will be submitted if requested to run async. Otherwise null.
      */
-    ManagedCompletableFuture(Executor managedExecutor, AtomicReference<Future<?>> futureRef) {
+    ManagedCompletableFuture(Executor managedExecutor, FutureRefExecutor futureRef) {
         super();
 
         this.completableFuture = null;
         this.defaultExecutor = managedExecutor;
         this.futureRef = futureRef;
+
+        if (futureRef != null)
+            futureRef.completableFutureRef.set(this);
     }
 
     // static method equivalents for CompletableFuture, plus other static methods for ManagedExecutorImpl to use
@@ -205,7 +230,7 @@ public class ManagedCompletableFuture<T> extends CompletableFuture<T> {
      */
     @Trivial
     public static <U> CompletableFuture<U> completedFuture(U value) {
-        throw new UnsupportedOperationException("Use ManagedExecutor.completedFuture instead"); // TODO NLS
+        throw new UnsupportedOperationException(Tr.formatMessage(tc, "CWWKC1156.not.supported", "ManagedExecutor.completedFuture"));
     }
 
     /**
@@ -236,7 +261,7 @@ public class ManagedCompletableFuture<T> extends CompletableFuture<T> {
      */
     @Trivial
     public static <U> CompletionStage<U> completedStage(U value) {
-        throw new UnsupportedOperationException("Use ManagedExecutor.completedStage instead"); // TODO NLS
+        throw new UnsupportedOperationException(Tr.formatMessage(tc, "CWWKC1156.not.supported", "ManagedExecutor.completedStage"));
     }
 
     /**
@@ -267,22 +292,15 @@ public class ManagedCompletableFuture<T> extends CompletableFuture<T> {
     }
 
     /**
-     * Alternative to CompletableFuture.delayedExecutor(delay, unit, executor) with an implementation that uses the Liberty
-     * ScheduledExecutor for notification of the delay and captures thread context from the invoker of the execute method
-     * (if the specified executor is a ManagedExecutorService) and propagates it to the running action. Except if the
-     * action is already contextualized, then the context of the action overrides.
+     * Because CompletableFuture.delayedExecutor is static, this is not a true override.
+     * It will be difficult for the user to invoke this method because they would need to get the class
+     * of the CompletableFuture implementation and locate the static delayedExecutor method on that.
      *
-     * @param delay amount of time to delay
-     * @param unit time unit of the delay value
-     * @param executor executor upon which to run the task after the delay elapses
-     * @return new executor instance
+     * @throws UnsupportedOperationException
      */
-    // TODO given how difficult it will be for users to invoke this static method, should we even provide it?
+    @Trivial
     public static Executor delayedExecutor(long delay, TimeUnit unit, Executor executor) {
-        if (JAVA8)
-            throw new UnsupportedOperationException();
-
-        return new DelayedExecutor(delay, unit, executor);
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -294,7 +312,7 @@ public class ManagedCompletableFuture<T> extends CompletableFuture<T> {
      */
     @Trivial
     public static <U> CompletableFuture<U> failedFuture(Throwable x) {
-        throw new UnsupportedOperationException("Use ManagedExecutor.failedFuture instead"); // TODO NLS
+        throw new UnsupportedOperationException(Tr.formatMessage(tc, "CWWKC1156.not.supported", "ManagedExecutor.failedFuture"));
     }
 
     /**
@@ -327,7 +345,7 @@ public class ManagedCompletableFuture<T> extends CompletableFuture<T> {
      */
     @Trivial
     public static <U> CompletionStage<U> failedStage(Throwable x) {
-        throw new UnsupportedOperationException("Use ManagedExecutor.failedStage instead"); // TODO NLS
+        throw new UnsupportedOperationException(Tr.formatMessage(tc, "CWWKC1156.not.supported", "ManagedExecutor.failedStage"));
     }
 
     /**
@@ -378,7 +396,7 @@ public class ManagedCompletableFuture<T> extends CompletableFuture<T> {
      */
     @Trivial
     public static CompletableFuture<Void> runAsync(Runnable action) {
-        throw new UnsupportedOperationException("Use ManagedExecutor.runAsync instead"); // TODO NLS
+        throw new UnsupportedOperationException(Tr.formatMessage(tc, "CWWKC1156.not.supported", "ManagedExecutor.runAsync"));
     }
 
     /**
@@ -420,7 +438,7 @@ public class ManagedCompletableFuture<T> extends CompletableFuture<T> {
      */
     @Trivial
     public static <U> CompletableFuture<U> supplyAsync(Supplier<U> action) {
-        throw new UnsupportedOperationException("Use ManagedExecutor.supplyAsync instead"); // TODO NLS
+        throw new UnsupportedOperationException(Tr.formatMessage(tc, "CWWKC1156.not.supported", "ManagedExecutor.supplyAsync"));
     }
 
     /**
@@ -609,12 +627,6 @@ public class ManagedCompletableFuture<T> extends CompletableFuture<T> {
         if (executor instanceof WSManagedExecutorService) {
             WSManagedExecutorService managedExecutor = (WSManagedExecutorService) executor;
             contextSvc = managedExecutor.getContextService();
-        } else if (executor instanceof DelayedExecutor) {
-            DelayedExecutor delayedExecutor = ((DelayedExecutor) executor);
-            if (delayedExecutor.executor instanceof WSManagedExecutorService) {
-                WSManagedExecutorService managedExecutor = (WSManagedExecutorService) delayedExecutor.executor;
-                contextSvc = managedExecutor.getContextService();
-            }
         }
 
         if (contextSvc == null)
@@ -929,7 +941,7 @@ public class ManagedCompletableFuture<T> extends CompletableFuture<T> {
      * @return a new instance of this class.
      */
     @Trivial
-    <R> CompletableFuture<R> newInstance(CompletableFuture<R> completableFuture, Executor managedExecutor, AtomicReference<Future<?>> futureRef) {
+    <R> CompletableFuture<R> newInstance(CompletableFuture<R> completableFuture, Executor managedExecutor, FutureRefExecutor futureRef) {
         return new ManagedCompletableFuture<R>(completableFuture, managedExecutor, futureRef);
     }
 
@@ -1520,7 +1532,9 @@ public class ManagedCompletableFuture<T> extends CompletableFuture<T> {
     @Trivial
     public String toString() {
         StringBuilder s = new StringBuilder(250).append(getClass().getSimpleName()) //
-                        .append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+                        .append('@')
+                        .append(Integer.toHexString(System.identityHashCode(this)))
+                        .append('[');
         if (JAVA8)
             s.append(Integer.toHexString(completableFuture.hashCode())).append(' ');
         if (JAVA8 ? completableFuture.isDone() : super.isDone())
@@ -1597,88 +1611,6 @@ public class ManagedCompletableFuture<T> extends CompletableFuture<T> {
             } finally {
                 futureRefLocal.remove();
             }
-        }
-    }
-
-    /**
-     * Executor returned by the static delayedExecutor methods.
-     */
-    private static class DelayedExecutor implements Executor {
-        private final long delay;
-        final Executor executor;
-        private final TimeUnit unit;
-
-        private DelayedExecutor(long delay, TimeUnit unit, Executor executor) {
-            this.delay = delay;
-            this.unit = unit;
-            this.executor = executor;
-        }
-
-        /**
-         * Schedule the specified action to be submitted in after the delay associated with this DelayedExecutor.
-         *
-         * @param action action to submit after the delay
-         */
-        @Override
-        @Trivial
-        public void execute(Runnable action) {
-            final boolean trace = TraceComponent.isAnyTracingEnabled();
-            if (trace && tc.isEntryEnabled())
-                Tr.entry(this, tc, "execute: schedule with delay", action);
-
-            // Context capture & propagation is only useful for DelayedExecutor when it is used on its own.
-            // Otherwise, if supplied to managedCompletableFuture.*Async methods, then context that is captured
-            // separately by the ManagedCompletableFuture overrides (as it should).
-            ThreadContextDescriptor contextDescriptor = captureThreadContext(executor);
-            if (contextDescriptor != null)
-                action = new ContextualRunnable(contextDescriptor, action);
-
-            Executor delayedTaskExecutor = executor instanceof WSManagedExecutorService //
-                            ? ((WSManagedExecutorService) executor).getNormalPolicyExecutor() //
-                            : executor;
-
-            ScheduledExecutorService scheduledExecutor = AccessController.doPrivileged(getScheduledExecutorAction);
-            ScheduledFuture<?> future = scheduledExecutor.schedule(new DelayedTask(action, delayedTaskExecutor), delay, unit);
-
-            if (trace && tc.isEntryEnabled())
-                Tr.exit(this, tc, "execute: schedule with delay", future);
-        }
-
-        @Override
-        public String toString() {
-            return new StringBuilder(super.toString()).append(": ").append(delay).append(' ').append(unit).append(" on ").append(executor).toString();
-        }
-    }
-
-    /**
-     * Task that a DelayedExecutor schedules in order to submit an action after a delay.
-     */
-    private static class DelayedTask implements Runnable {
-        private final Runnable action;
-        private final Executor executor;
-
-        private DelayedTask(Runnable action, Executor executor) {
-            this.action = action;
-            this.executor = executor;
-        }
-
-        @Override
-        @Trivial
-        public void run() {
-            final boolean trace = TraceComponent.isAnyTracingEnabled();
-            if (trace && tc.isEntryEnabled())
-                Tr.entry(this, tc, "run: delayed submit", action, executor);
-
-            Future<?> future;
-            if (executor instanceof ExecutorService) {
-                future = ((ExecutorService) executor).submit(action);
-            } else {
-                executor.execute(action);
-                future = null;
-            }
-
-            if (trace && tc.isEntryEnabled())
-                Tr.exit(this, tc, "run: delayed submit", future);
         }
     }
 

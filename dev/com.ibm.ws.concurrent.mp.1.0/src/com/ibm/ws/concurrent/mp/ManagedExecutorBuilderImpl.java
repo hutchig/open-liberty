@@ -15,19 +15,24 @@ import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.microprofile.concurrent.ManagedExecutor;
 import org.eclipse.microprofile.concurrent.ThreadContext;
 import org.eclipse.microprofile.concurrent.spi.ThreadContextProvider;
 
+import com.ibm.websphere.ras.Tr;
+import com.ibm.websphere.ras.TraceComponent;
+import com.ibm.ws.runtime.metadata.ComponentMetaData;
+import com.ibm.ws.threadContext.ComponentMetaDataAccessorImpl;
 import com.ibm.ws.threading.PolicyExecutor;
 
 /**
  * Builder that programmatically configures and creates ManagedExecutor instances.
  */
 class ManagedExecutorBuilderImpl implements ManagedExecutor.Builder {
+    private static final TraceComponent tc = Tr.register(ManagedExecutorBuilderImpl.class);
+
     static final AtomicLong instanceCount = new AtomicLong();
 
     private final ConcurrencyProviderImpl concurrencyProvider;
@@ -54,7 +59,7 @@ class ManagedExecutorBuilderImpl implements ManagedExecutor.Builder {
         unknown.addAll(propagated);
 
         if (unknown.size() < cleared.size() + propagated.size())
-            throw new IllegalArgumentException(/* TODO findOverlapping(configured) */);
+            failOnOverlapOfClearedPropagated();
 
         // Determine what to with remaining context types that are not explicitly configured
         ContextOp remaining;
@@ -69,13 +74,8 @@ class ManagedExecutorBuilderImpl implements ManagedExecutor.Builder {
 
         LinkedHashMap<ThreadContextProvider, ContextOp> configPerProvider = new LinkedHashMap<ThreadContextProvider, ContextOp>();
 
-        // TODO: Take knownTypes processing off of the main code path, since this is only used on error path
-        Set<String> knownTypes = new HashSet<>();
-        for (String builtin : ThreadContextImpl.BUILT_IN_TYPES)
-            knownTypes.add(builtin);
         for (ThreadContextProvider provider : contextProviders) {
             String contextType = provider.getThreadContextType();
-            knownTypes.add(contextType);
             unknown.remove(contextType);
 
             ContextOp op = propagated.contains(contextType) ? ContextOp.PROPAGATED //
@@ -86,24 +86,26 @@ class ManagedExecutorBuilderImpl implements ManagedExecutor.Builder {
 
         // unknown thread context types
         if (unknown.size() > 0)
-            throw new IllegalStateException("Unknown thread contexts specified: " + unknown.toString() +
-                                            ". Allowed thread contexts values are: " + knownTypes); // TODO translated error message
+            ThreadContextBuilderImpl.failOnUnknownContextTypes(unknown, contextProviders);
 
-        StringBuilder nameBuilder = new StringBuilder("ManagedExecutor_") //
-                        .append(maxAsync)
+        ComponentMetaData cData = ComponentMetaDataAccessorImpl.getComponentMetaDataAccessor().getComponentMetaData();
+        String appName = cData == null ? null : cData.getJ2EEName().getApplication();
+        StringBuilder nameBuilder = appName == null ? new StringBuilder() : new StringBuilder(appName).append('_');
+
+        nameBuilder.append("ManagedExecutor_") //
+                        .append(instanceCount.incrementAndGet())
                         .append('_') //
-                        .append(maxQueued)
-                        .append('_');
+                        .append(maxAsync == -1 ? "max" : maxAsync)
+                        .append('_') //
+                        .append(maxQueued == -1 ? "max" : maxAsync);
 
         for (String propagatedType : propagated)
             if (propagatedType.matches("\\w*")) // one or more of a-z, A-Z, _, 0-9
-                nameBuilder.append(propagatedType).append('_');
-
-        nameBuilder.append(instanceCount.incrementAndGet());
+                nameBuilder.append('_').append(propagatedType);
 
         String name = nameBuilder.toString();
 
-        PolicyExecutor policyExecutor = concurrencyProvider.policyExecutorProvider.create(name) //
+        PolicyExecutor policyExecutor = concurrencyProvider.policyExecutorProvider.create(name, appName) //
                         .maxConcurrency(maxAsync) //
                         .maxQueueSize(maxQueued);
 
@@ -117,6 +119,20 @@ class ManagedExecutorBuilderImpl implements ManagedExecutor.Builder {
         cleared.clear();
         Collections.addAll(cleared, types);
         return this;
+    }
+
+    /**
+     * Fail with error indentifying the overlap(s) in context types between:
+     * cleared, propagated.
+     *
+     * @throws IllegalStateException identifying the overlap.
+     */
+    private void failOnOverlapOfClearedPropagated() {
+        HashSet<String> overlap = new HashSet<String>(cleared);
+        overlap.retainAll(propagated);
+        if (overlap.isEmpty()) // only possible if builder is concurrently modified during build
+            throw new ConcurrentModificationException();
+        throw new IllegalStateException(Tr.formatMessage(tc, "CWWKC1151.context.lists.overlap", overlap));
     }
 
     @Override
