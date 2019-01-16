@@ -8,17 +8,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package com.ibm.ws.microprofile.reactive.streams.spi.impl;
+package com.ibm.ws.microprofile.reactive.streams.operators.spi.impl;
 
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 
-import org.eclipse.microprofile.reactive.streams.spi.ReactiveStreamsEngine;
+import org.eclipse.microprofile.reactive.streams.operators.spi.Graph;
+import org.eclipse.microprofile.reactive.streams.operators.spi.ReactiveStreamsEngine;
+import org.eclipse.microprofile.reactive.streams.operators.spi.SubscriberWithCompletionStage;
+import org.eclipse.microprofile.reactive.streams.operators.spi.UnsupportedStageException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
+import org.reactivestreams.Processor;
+import org.reactivestreams.Publisher;
 
 import com.ibm.websphere.ras.Tr;
 import com.ibm.websphere.ras.TraceComponent;
@@ -26,7 +32,7 @@ import com.ibm.wsspi.kernel.service.utils.AtomicServiceReference;
 
 import io.smallrye.reactive.streams.Engine;
 
-@Component(name = "com.ibm.ws.microprofile.reactive.streams.spi.impl.WASReactiveStreamsEngineImpl", service = {
+@Component(name = "com.ibm.ws.microprofile.reactive.streams.operators.spi.impl.WASReactiveStreamsEngineImpl", service = {
         ReactiveStreamsEngine.class }, property = {
                 "service.vendor=IBM" }, immediate = true, configurationPolicy = ConfigurationPolicy.IGNORE)
 
@@ -92,6 +98,34 @@ public class WASReactiveStreamsEngineImpl extends Engine implements ReactiveStre
             return ForkJoinPool.commonPool();
 
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public <T> CompletionStage<T> buildCompletion(Graph arg0) throws UnsupportedStageException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public <T, R> Processor<T, R> buildProcessor(Graph arg0) throws UnsupportedStageException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public <T> Publisher<T> buildPublisher(Graph arg0) throws UnsupportedStageException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public <T, R> SubscriberWithCompletionStage<T, R> buildSubscriber(Graph arg0) throws UnsupportedStageException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
