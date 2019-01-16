@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2019 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package com.ibm.ws.jpa.container.eclipselink;
 
-/**
- *
- */
-public class Consts {
-    // EclipseLink provider constants
-    public static final String ECLIPSELINK_TRACE_GROUP = "eclipselink";
-    // TODO -- fix this
-    public static final String ECLIPSELINK_RESOURCE_BUNDLE_NAME = "eclipselink";
+package com.ibm.ws.jpa.fvt.relationships.oneXmany.ejblocal;
+
+import com.ibm.ws.testtooling.vehicle.ejb.EJBTestVehicle;
+
+public interface OneXManySLEJBLocal extends EJBTestVehicle {
+
 }
