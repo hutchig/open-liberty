@@ -26,7 +26,7 @@ Import-Package: \
   com.ibm.ws.microprofile.reactive.streams.operators.spi.impl; version="[1.0,1.1)",\
   org.eclipse.microprofile.reactive.streams.operators.spi; version="[1.0,1.1)",\
   org.eclipse.microprofile.reactive.streams.operators; version="[1.0,1.1)",\
-  io.smallrye.reactive.streams.operators; version="[0.2,0.3)",\
+  io.smallrye.reactive.streams; version="[0.4,0.5)",\
   org.reactivestreams;version="[1.0,2)",\
   *
 

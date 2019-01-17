@@ -22,8 +22,13 @@ Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
 Import-Package: \
   *
 
+# We will whittle this down once it is working
 Export-Package: \
-  io.smallrye.reactive.streams; version="0.2.2"
+  io.smallrye.reactive.streams; version="0.4.1", \
+  io.smallrye.reactive.streams.operators; version="0.4.1", \
+  io.smallrye.reactive.streams.spi; version="0.4.1", \
+  io.smallrye.reactive.streams.stages; version="0.4.1", \
+  io.smallrye.reactive.streams.utils; version="0.4.1", \
 
 Include-Resource: \
   @${repo;com.ibm.ws.io.smallrye.reactive:smallrye-reactive-streams-operators;0.4.1}
