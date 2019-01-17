@@ -9,6 +9,7 @@ Subsystem-Name: MicroProfile Reactive Streams 1.0
 IBM-API-Package: \
   org.eclipse.microprofile.reactive.streams.operators; type="stable", \
   org.eclipse.microprofile.reactive.streams.operators.spi; type="stable", \
+  org.eclipse.microprofile.reactive.streams.operators.core; type="stable", \
   org.reactivestreams; type="stable";
 -features=\
   com.ibm.websphere.appserver.org.eclipse.microprofile.reactive.streams.operators-1.0

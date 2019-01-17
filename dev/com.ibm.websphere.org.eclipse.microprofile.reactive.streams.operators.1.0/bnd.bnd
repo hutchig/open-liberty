@@ -26,6 +26,7 @@ Import-Package: \
   
 Export-Package: \
   org.eclipse.microprofile.reactive.streams;version=1.0, \
+  org.eclipse.microprofile.reactive.streams.operators.core;version=1.0, \
   org.eclipse.microprofile.reactive.streams.operators.spi;version=1.0
 
 Include-Resource: \
