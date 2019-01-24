@@ -51,10 +51,10 @@ src: src,resources
 testsrc: test/src
 
 -buildpath: \
+  org.eclipse.osgi;version=latest, \
   com.ibm.ws.cdi.interfaces;version=latest,\
   com.ibm.ws.logging;version=latest, \
   com.ibm.ws.logging.core;version=latest, \
-  org.eclipse.osgi;version=latest, \
   com.ibm.websphere.javaee.cdi.1.2;version=latest, \
   com.ibm.websphere.org.osgi.core;version=latest, \
   com.ibm.websphere.org.osgi.service.component;version=latest, \

@@ -20,6 +20,7 @@ import java.util.stream.IntStream;
 import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
 import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 import org.eclipse.microprofile.reactive.streams.operators.spi.ReactiveStreamsEngine;
+import org.junit.Assert;
 
 import com.ibm.ws.microprofile.reactive.streams.operators.spi.impl.WASReactiveStreamsEngineImpl;
 
@@ -44,6 +45,7 @@ public class WASReactiveUT {
      * @return the stage's CompletableFuture.get()
      */
     protected <T> T await(CompletionStage<T> future) {
+        Assert.assertNotNull("CompletionStage is null ", future);
         try {
             return future.toCompletableFuture().get(getTimeout(), TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
