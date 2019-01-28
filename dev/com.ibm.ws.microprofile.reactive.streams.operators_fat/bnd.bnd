@@ -13,8 +13,7 @@ bVersion=1.0
 
 src: \
 	fat/src,\
-	test-applications/ReactiveStreamsTest/src, \
-	test-applications/ReactiveStreamsTest/resources
+	test-applications/ReactiveStreamsTest/src
 	
 
 javac.source: 1.8

@@ -60,4 +60,4 @@ testsrc: test/src
 	com.ibm.websphere.org.eclipse.microprofile.reactive.streams.operators.1.0;version=latest, \
 	com.ibm.ws.smallrye.reactive.streams.operators.1.0;version=latest, \
 	com.ibm.ws.logging.core;version=latest,\
-	com.ibm.ws.microprofile.reactive.streams.operators
+	com.ibm.ws.microprofile.reactive.streams.operators;version=latest

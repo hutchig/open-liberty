@@ -4,7 +4,5 @@
 	<classpathentry kind="src" path="test-applications/ReactiveStreamsTest/src"/>
 	<classpathentry kind="con" path="aQute.bnd.classpath.container"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="lib" path="/Users/hutchig/.m2/repository/com/ibm/ws/io/smallrye/reactive/smallrye-reactive-streams-operators/0.4.1-SNAPSHOT/smallrye-reactive-streams-operators-0.4.1-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="/libertyGit/open-liberty/dev/build.image/wlp/dev/api/stable/com.ibm.websphere.org.eclipse.microprofile.reactive.streams.operators.1.0_1.0.24.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

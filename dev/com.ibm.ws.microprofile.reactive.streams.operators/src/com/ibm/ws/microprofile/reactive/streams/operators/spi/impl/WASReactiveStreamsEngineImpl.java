@@ -102,30 +102,26 @@ public class WASReactiveStreamsEngineImpl extends Engine implements ReactiveStre
 
     /** {@inheritDoc} */
     @Override
-    public <T> CompletionStage<T> buildCompletion(Graph arg0) throws UnsupportedStageException {
-        // TODO Auto-generated method stub
-        return null;
+    public <T> CompletionStage<T> buildCompletion(Graph graph) throws UnsupportedStageException {
+        return super.buildCompletion(graph);
     }
 
     /** {@inheritDoc} */
     @Override
-    public <T, R> Processor<T, R> buildProcessor(Graph arg0) throws UnsupportedStageException {
-        // TODO Auto-generated method stub
-        return null;
+    public <T, R> Processor<T, R> buildProcessor(Graph graph) throws UnsupportedStageException {
+        return super.buildProcessor(graph);
     }
 
     /** {@inheritDoc} */
     @Override
-    public <T> Publisher<T> buildPublisher(Graph arg0) throws UnsupportedStageException {
-        // TODO Auto-generated method stub
-        return null;
+    public <T> Publisher<T> buildPublisher(Graph graph) throws UnsupportedStageException {
+        return super.buildPublisher(graph);
     }
 
     /** {@inheritDoc} */
     @Override
-    public <T, R> SubscriberWithCompletionStage<T, R> buildSubscriber(Graph arg0) throws UnsupportedStageException {
-        // TODO Auto-generated method stub
-        return null;
+    public <T, R> SubscriberWithCompletionStage<T, R> buildSubscriber(Graph graph) throws UnsupportedStageException {
+        return buildSubscriber(graph);
     }
 
 }
