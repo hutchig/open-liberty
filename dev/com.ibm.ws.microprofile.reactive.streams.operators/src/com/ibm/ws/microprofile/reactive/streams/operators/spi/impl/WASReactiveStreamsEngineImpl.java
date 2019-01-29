@@ -10,12 +10,16 @@
  *******************************************************************************/
 package com.ibm.ws.microprofile.reactive.streams.operators.spi.impl;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 
+import org.eclipse.microprofile.reactive.streams.operators.core.ReactiveStreamsFactoryImpl;
 import org.eclipse.microprofile.reactive.streams.operators.spi.Graph;
 import org.eclipse.microprofile.reactive.streams.operators.spi.ReactiveStreamsEngine;
+import org.eclipse.microprofile.reactive.streams.operators.spi.ReactiveStreamsFactoryResolver;
 import org.eclipse.microprofile.reactive.streams.operators.spi.SubscriberWithCompletionStage;
 import org.eclipse.microprofile.reactive.streams.operators.spi.UnsupportedStageException;
 import org.osgi.framework.ServiceReference;
@@ -52,6 +56,8 @@ public class WASReactiveStreamsEngineImpl extends Engine implements ReactiveStre
      */
     public void activate(ComponentContext cc) {
         executorServiceRef.activate(cc);
+        ReactiveStreamsFactoryResolver.setInstance(new ReactiveStreamsFactoryImpl());
+        System.out.println("WASReactiveStreamsEngineImpl: factory set");
         singleton = this;
     }
 
@@ -103,7 +109,13 @@ public class WASReactiveStreamsEngineImpl extends Engine implements ReactiveStre
     /** {@inheritDoc} */
     @Override
     public <T> CompletionStage<T> buildCompletion(Graph graph) throws UnsupportedStageException {
-        return super.buildCompletion(graph);
+        CompletionStage<T> stage = AccessController.doPrivileged(new PrivilegedAction<CompletionStage<T>>() {
+            @Override
+            public CompletionStage<T> run() {
+                return WASReactiveStreamsEngineImpl.super.buildCompletion(graph);
+            }
+        });
+        return stage;
     }
 
     /** {@inheritDoc} */
