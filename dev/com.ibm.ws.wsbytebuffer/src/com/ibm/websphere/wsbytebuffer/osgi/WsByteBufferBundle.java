@@ -149,7 +149,6 @@ public class WsByteBufferBundle implements ServerQuiesceListener {
     @Modified
     protected synchronized void modified(Map<String, Object> configuration) {
 
-    	// No WsByteBuffer specific config in CF.
 
         if (TraceComponent.isAnyTracingEnabled() && tc.isEventEnabled()) {
             Tr.event(this, tc, "Processing config", configuration);

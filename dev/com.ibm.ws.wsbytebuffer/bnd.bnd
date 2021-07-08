@@ -23,19 +23,22 @@ IBM-Default-Config: OSGI-INF/wlp/defaultInstances.xml
 # file, and place an @version javadoc tag in package-level javadoc. 
 # Append ";provide:=true" if this bundle also provides an implementation
 # for the exported API.
-Export-Package: \
-	com.ibm.websphere.wsbytebuffer.osgi;provide:=true, \
-	com.ibm.ws.wsbytebuffer;version="1.0";provide:=true
+#	com.ibm.wsspi.bytebuffer;version="1.0";-split-package:=merge-last
 
-Private-Package: \
-	com.ibm.ws.bytebuffer.internal, \
-	com.ibm.ws.bytebuffer.internal.resources
+Export-Package: com.ibm.wsspi.bytebuffer;version="1.0";provide:=true, \
+    com.ibm.ws.bytebuffer.internal;version="1.0";provide:=true, \
+    com.ibm.ws.bytebuffer.internal.resources;version="1.0";provide:=true, \
+	com.ibm.websphere.wsbytebuffer.osgi;provide:=true
+
+#	com.ibm.wsspi.bytebuffer2;version="1.0";provide:=true
+#    com.ibm.ws.bytebuffer.internal;version="1.0";provide:=true, \
+#    com.ibm.wsspi.bytebuffer;version="1.0";provide:=true
 
 Include-Resource: \
     OSGI-INF=resources/OSGI-INF
 
 -dsannotations: \
-   com.ibm.ws.bytebuffer.internal.ByteBufferConfiguration
+    com.ibm.ws.bytebuffer.internal.ByteBufferConfiguration
 
 Service-Component: \
 
