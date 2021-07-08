@@ -10,8 +10,6 @@
  *******************************************************************************/
 package com.ibm.ws.channelfw.internal;
 
-import com.ibm.ws.wsbytebuffer.WsByteBufferTestClass;
-
 /**
  * This purpose of this interface is to consolidate Strings used throughout
  * the Channel Framework to prevent future changes from rippling to all
@@ -45,7 +43,5 @@ public interface ChannelFrameworkConstants {
      */
     String CHAIN_DATA_KEY = "chainData";
     String CHAIN_NAME_KEY = "chainName";
-
-    String BUFFER = WsByteBufferTestClass.BUFFER;
 
 }

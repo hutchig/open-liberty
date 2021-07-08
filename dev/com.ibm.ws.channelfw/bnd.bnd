@@ -28,27 +28,31 @@ IBM-Default-Config: OSGI-INF/wlp/defaultInstances.xml
 Export-Package: com.ibm.websphere.channelfw*;provide:=true, \
 	com.ibm.wsspi.channelfw*;provide:=true, \
 	com.ibm.wsspi.connmgmt;provide:=true, \
-	com.ibm.wsspi.bytebuffer;provide:=true, \
 	com.ibm.wsspi.tcpchannel;provide:=true, \
     com.ibm.wsspi.udpchannel;provide:=true, \
     com.ibm.websphere.endpoint;provide:=true, \
-	com.ibm.io.async
+	com.ibm.io.async, \
+	com.ibm.wsspi.bytebuffer
+
+Import-Package: \
+    com.ibm.wsspi.bytebuffer, \
+    com.ibm.ws.bytebuffer.internal, \
+    com.ibm.ws.bytebuffer.internal.resources
 	
 Private-Package: com.ibm.io.async, \
-	com.ibm.ws.bytebuffer.internal, \
-	com.ibm.ws.bytebuffer.internal.resources, \
 	com.ibm.ws.channelfw*, \
 	com.ibm.ws.tcpchannel.internal, \
 	com.ibm.ws.tcpchannel.internal.resources, \
 	com.ibm.ws.udpchannel.internal, \
 	com.ibm.ws.udpchannel.internal.resources
+#	com.ibm.ws.bytebuffer.internal, \
+#	com.ibm.ws.bytebuffer.internal.resources, \
 	
 Include-Resource: \
     OSGI-INF=resources/OSGI-INF
 
--dsannotations: com.ibm.websphere.channelfw.osgi.CHFWBundle,\
-   com.ibm.ws.bytebuffer.internal.ByteBufferConfiguration
-
+-dsannotations: com.ibm.websphere.channelfw.osgi.CHFWBundle
+ 
 Service-Component: \
     com.ibm.ws.tcpchannel.options; \
         implementation:=com.ibm.wsspi.channelfw.ChannelConfiguration; \
@@ -82,6 +86,8 @@ instrument.disabled: true
 	com.ibm.ws.kernel.security.thread,\
 	com.ibm.ws.kernel.boot.core;version=latest, \
 	com.ibm.ws.org.osgi.annotation.versioning;version=latest, \
+	com.ibm.wsspi.bytebuffer;version=latest, \
+	com.ibm.ws.wsbytebuffer.internal;version=latest, \
 	com.ibm.ws.wsbytebuffer;version=latest
 
 #  <property name="unittest.prop.com.ibm.ws.logging.exception.log.enabled" value="false" />
