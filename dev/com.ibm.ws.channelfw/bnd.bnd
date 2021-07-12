@@ -35,6 +35,14 @@ Export-Package: com.ibm.websphere.channelfw*;provide:=true, \
 	com.ibm.wsspi.bytebuffer
 
 Import-Package: \
+    org.osgi.service.component, \
+    com.ibm.websphere.ras, \
+    com.ibm.websphere.event, \
+    com.ibm.wsspi.timer, \
+    javax.management;resolution:=optional, \
+    com.ibm.ws.ffdc, \
+    org.osgi.framework, \
+    com.ibm.wsspi.kernel.service.utils, \
     com.ibm.wsspi.bytebuffer, \
     com.ibm.ws.bytebuffer.internal, \
     com.ibm.ws.bytebuffer.internal.resources
@@ -76,6 +84,7 @@ instrument.disabled: true
 
 -buildpath: \
 	com.ibm.ws.logging,\
+    com.ibm.ws.logging.core,\
 	com.ibm.ws.event,\
 	com.ibm.websphere.org.osgi.core,\
 	com.ibm.websphere.org.osgi.service.component,\
@@ -86,8 +95,6 @@ instrument.disabled: true
 	com.ibm.ws.kernel.security.thread,\
 	com.ibm.ws.kernel.boot.core;version=latest, \
 	com.ibm.ws.org.osgi.annotation.versioning;version=latest, \
-	com.ibm.wsspi.bytebuffer;version=latest, \
-	com.ibm.ws.wsbytebuffer.internal;version=latest, \
 	com.ibm.ws.wsbytebuffer;version=latest
 
 #  <property name="unittest.prop.com.ibm.ws.logging.exception.log.enabled" value="false" />
